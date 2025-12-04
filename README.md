@@ -4,7 +4,7 @@
 
 ###
 
-<img align="right" src="https://count.getloli.com/@DeepakBansode?name=DeepakBansode&theme=sketch-1&padding=7&offset=0&align=top&scale=0.5&pixelated=1&darkmode=auto"  />
+<img align="right" src="https://count.getloli.com/@DeepakBansode?name=DeepakBansode&theme=sketch-1&padding=7&offset=0&align=top&scale=0.3&pixelated=1&darkmode=auto"  />
 
 ###
 
