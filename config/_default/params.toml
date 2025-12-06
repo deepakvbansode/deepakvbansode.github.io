@@ -21,9 +21,9 @@ theme_default = "system" # available options [light/dark/system]
 mainSections = ["blog"]
 # contact form action
 contact_form_action = "#" # contact form works with [https://airform.io/] or [https://formspree.io]
-# google tag manager, see https://developers.google.com/tag-manager/
-google_tag_manager = "" # example: G-XXXXXXXXXX
-google_adsense = ""     # example: ca-pub-xxxxxxxxxxxxxxxx
+# All tracking disabled
+# google_tag_manager = "" # disabled
+# google_adsense = ""     # disabled
 # custom script on header, example: custom_script= "<script>console.log(\"Hello World\")</script>"
 custom_script = ""
 # copyright
@@ -62,14 +62,14 @@ twitter = "zeon_studio"
 image = "images/og-image.png"
 
 
-# site verifications
+# site verifications - DISABLED
 # verification module: https://github.com/gethugothemes/hugo-modules/tree/master/seo-tools/site-verifications
-[site_verification]
-google = ""   # Your verification code
-bing = ""     # Your verification code
-baidu = ""    # Your verification code
-facebook = "" # Your verification code
-mastodon = "" # Your verification code
+# [site_verification]
+# google = ""   # disabled
+# bing = ""     # disabled
+# baidu = ""    # disabled
+# facebook = "" # disabled
+# mastodon = "" # disabled
 
 # cookies
 # cookies module: https://github.com/gethugothemes/hugo-modules/tree/master/components/cookie-consent
