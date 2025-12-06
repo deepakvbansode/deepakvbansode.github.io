@@ -12,10 +12,39 @@
             </p>
           </div>
 
+          <!-- Success Message (hidden by default) -->
+          <div
+            id="success-message"
+            class="hidden bg-primary/10 border-2 border-primary rounded-lg p-8 text-center mb-8">
+            <div class="text-6xl mb-4">✓</div>
+            <h3 class="text-2xl font-bold text-primary mb-4">
+              Thank You for Reaching Out!
+            </h3>
+            <p class="text-lg text-text dark:text-darkmode-text mb-2">
+              I've received your message and will get back to you as soon as
+              possible.
+            </p>
+            <p class="text-text-light dark:text-darkmode-text-light">
+              Usually within 24-48 hours during business days.
+            </p>
+          </div>
+
+          <!-- Contact Form -->
           <form
+            id="contact-form"
             action="{{ site.Params.contact_form_action }}"
             method="POST"
             class="bg-light dark:bg-darkmode-light rounded-lg p-8">
+            <input
+              type="hidden"
+              name="_next"
+              value="{{ .Permalink }}?success=true" />
+            <input
+              type="hidden"
+              name="_subject"
+              value="New Contact Form Submission" />
+            <input type="hidden" name="_captcha" value="false" />
+
             <div class="mb-6">
               <label for="name" class="form-label">
                 Full Name <span class="text-red-500">*</span>
@@ -145,4 +174,25 @@
       </div>
     </div>
   </section>
+
+  <script>
+    // Check if redirected with success parameter
+    window.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("success") === "true") {
+        // Hide form and show success message
+        document.getElementById("contact-form").style.display = "none";
+        document.getElementById("success-message").classList.remove("hidden");
+
+        // Scroll to success message
+        document
+          .getElementById("success-message")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+
+        // Clean URL (remove success parameter)
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+    });
+  </script>
 {{ end }}
