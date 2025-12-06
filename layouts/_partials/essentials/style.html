@@ -43,35 +43,31 @@
   {{ end }}
 {{ end }}
 
-<!-- main style -->
-{{ $styles = $styles | append (resources.Get "css/main.css") }}
-{{ $allStyles := $styles | resources.Concat "css/style.css" }}
-{{ $allStyles = $allStyles | resources.PostCSS }}
+{{ $mainCSS := resources.Get "css/main.css" }}
+{{ $tailwindOpts := dict "inlineImports" true }}
+{{ $tailwindCSS := $mainCSS | css.TailwindCSS $tailwindOpts }}
+
+{{ $styles = $styles | append $tailwindCSS }}
+{{ $styles = $styles | resources.Concat "css/style.css" }}
+
+{{ $stylesLazy = $stylesLazy | resources.Concat "css/style-lazy.css" }}
 
 {{ if hugo.IsProduction }}
-  {{ $allStyles = $allStyles | minify | fingerprint }}
+  {{ $styles = $styles | fingerprint }}
+  {{ $stylesLazy = $stylesLazy | minify | fingerprint }}
 {{ end }}
 
+
+<!-- link main style -->
 <link
-  crossorigin="anonymous"
-  integrity="{{ $allStyles.Data.Integrity }}"
-  href="{{ $allStyles.RelPermalink }}"
-  media="screen"
+  href="{{ $styles.RelPermalink }}"
+  integrity="{{ $styles.Data.Integrity }}"
   rel="stylesheet" />
 
-{{/* styles lazy */}}
-{{ $allStylesLazy := $stylesLazy | resources.Concat "css/style-lazy.css" }}
-{{ $allStylesLazy = $allStylesLazy | resources.PostCSS }}
-
-{{ if hugo.IsProduction }}
-  {{ $allStylesLazy = $allStylesLazy | minify | fingerprint }}
-{{ end }}
-
+<!-- link lazy style -->
 <link
-  crossorigin="anonymous"
-  integrity="{{ $allStylesLazy.Data.Integrity }}"
-  href="{{ $allStylesLazy.RelPermalink }}"
+  rel="stylesheet"
+  href="{{ $stylesLazy.RelPermalink }}"
+  integrity="{{ $stylesLazy.Data.Integrity }}"
   media="print"
-  onload="this.media='all'"
-  rel="stylesheet" />
-
+  onload="this.media='all'; this.onload=null;" />
