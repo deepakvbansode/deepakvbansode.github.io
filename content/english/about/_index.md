@@ -180,9 +180,9 @@ Deep expertise in Go, Kubernetes, and cloud technologies
 <div class="timeline-item">
 <div class="timeline-content">
 <span class="timeline-year">2011 - 2015</span>
-<h3 class="timeline-title">Bachelor's in Computer Engineering</h3>
-<div class="timeline-company">Savitribai Phule Pune University</div>
-<p class="timeline-description">Major in Computer Science with focus on Software Engineering. Participated in technical competitions and hackathons.</p>
+<h3 class="timeline-title">M.Sc. Computer Science</h3>
+<div class="timeline-company">ShriKrishna Mahavidyalaya Gunjoti</div>
+<p class="timeline-description">Dr. Babasaheb Ambedkar Marathwada University, Aurangabad. Major in Computer Science with focus on Software Engineering.</p>
 
 <div class="timeline-tech">
 <code>C++</code>
@@ -196,8 +196,8 @@ Deep expertise in Go, Kubernetes, and cloud technologies
 <div class="timeline-item">
 <div class="timeline-content">
 <span class="timeline-year">Early Life</span>
-<h3 class="timeline-title">Born and Raised in Pune, Maharashtra</h3>
-<p class="timeline-description">Grew up with a passion for technology and problem-solving.</p>
+<h3 class="timeline-title">Born in Tugaon, Karnataka</h3>
+<p class="timeline-description">Born in Tugaon, Ta. Aland, Dist. Gulbarga (now Kalaburagi), Karnataka. Grew up with a passion for technology and problem-solving.</p>
 </div>
 </div>
 

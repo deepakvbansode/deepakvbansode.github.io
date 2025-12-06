@@ -1,0 +1,148 @@
+{{ define "main" }}
+  {{ partial "page-header" . }}
+
+
+  <section class="section-sm">
+    <div class="container">
+      <div class="row">
+        <div class="md:col-10 lg:col-8 mx-auto">
+          <div class="mb-8 text-center">
+            <p class="text-lg text-text dark:text-darkmode-text">
+              {{ .Content }}
+            </p>
+          </div>
+
+          <form
+            action="{{ site.Params.contact_form_action }}"
+            method="POST"
+            class="bg-light dark:bg-darkmode-light rounded-lg p-8">
+            <div class="mb-6">
+              <label for="name" class="form-label">
+                Full Name <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="name"
+                name="name"
+                class="form-input"
+                placeholder="John Doe"
+                type="text"
+                required />
+            </div>
+
+            <div class="mb-6">
+              <label for="email" class="form-label">
+                Email Address <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="email"
+                name="email"
+                class="form-input"
+                placeholder="john.doe@email.com"
+                type="email"
+                required />
+            </div>
+
+            <div class="mb-6">
+              <label for="company" class="form-label">
+                Company / Organization
+              </label>
+              <input
+                id="company"
+                name="company"
+                class="form-input"
+                placeholder="Acme Inc."
+                type="text" />
+            </div>
+
+            <div class="mb-6">
+              <label for="inquiry_type" class="form-label">
+                Type of Inquiry <span class="text-red-500">*</span>
+              </label>
+              <select
+                id="inquiry_type"
+                name="inquiry_type"
+                class="form-input"
+                required>
+                <option value="">Select an option</option>
+                <option value="job_opportunity">Job Opportunity</option>
+                <option value="consulting">
+                  Consulting / Freelance Project
+                </option>
+                <option value="collaboration">
+                  Collaboration / Partnership
+                </option>
+                <option value="speaking">Speaking / Workshop</option>
+                <option value="mentorship">Mentorship Request</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="mb-6">
+              <label for="subject" class="form-label">
+                Subject <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="subject"
+                name="subject"
+                class="form-input"
+                placeholder="Brief subject line"
+                type="text"
+                required />
+            </div>
+
+            <div class="mb-6">
+              <label for="message" class="form-label">
+                Message <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                class="form-input"
+                placeholder="Tell me more about your inquiry, project details, timeline, budget (if applicable), or any specific requirements..."
+                rows="8"
+                required></textarea>
+            </div>
+
+            <div class="mb-6">
+              <label for="timeline" class="form-label">
+                Expected Timeline / Start Date
+              </label>
+              <input
+                id="timeline"
+                name="timeline"
+                class="form-input"
+                placeholder="e.g., Immediate, Within 2 weeks, Next month"
+                type="text" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full">
+              <span>Send Message</span>
+              <i class="fa fa-paper-plane pl-2"></i>
+            </button>
+          </form>
+
+          <div
+            class="mt-8 text-center text-sm text-text-light dark:text-darkmode-text-light">
+            <p>You can also reach me directly at:</p>
+            <div class="mt-4 flex flex-wrap justify-center gap-4">
+              <a
+                href="mailto:deepakvbansode@gmail.com"
+                class="inline-flex items-center text-primary hover:underline">
+                <i class="fa fa-envelope mr-2"></i>
+                deepakvbansode@gmail.com
+              </a>
+              <a
+                href="https://www.linkedin.com/in/deepak-bansode-506a25120/"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center text-primary hover:underline">
+                <i class="fab fa-linkedin mr-2"></i>
+                LinkedIn Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{{ end }}

@@ -20,7 +20,7 @@ theme_default = "system" # available options [light/dark/system]
 # Main Sections
 mainSections = ["blog"]
 # contact form action
-contact_form_action = "#" # contact form works with [https://airform.io/] or [https://formspree.io]
+contact_form_action = "https://formspree.io/f/mrbnljla" # Replace YOUR_FORM_ID with your Formspree form ID
 # All tracking disabled
 # google_tag_manager = "" # disabled
 # google_adsense = ""     # disabled
