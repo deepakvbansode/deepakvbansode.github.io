@@ -29,22 +29,26 @@
             </p>
           </div>
 
+          <!-- Error Message (hidden by default) -->
+          <div
+            id="error-message"
+            class="hidden bg-red-500/10 border-2 border-red-500 rounded-lg p-8 text-center mb-8">
+            <div class="text-6xl mb-4">✗</div>
+            <h3 class="text-2xl font-bold text-red-500 mb-4">
+              Oops! Something went wrong
+            </h3>
+            <p class="text-lg text-text dark:text-darkmode-text mb-2">
+              Please try again or contact me directly via email.
+            </p>
+          </div>
+
           <!-- Contact Form -->
           <form
             id="contact-form"
             action="{{ site.Params.contact_form_action }}"
             method="POST"
+            novalidate
             class="bg-light dark:bg-darkmode-light rounded-lg p-8">
-            <input
-              type="hidden"
-              name="_next"
-              value="{{ .Permalink }}?success=true" />
-            <input
-              type="hidden"
-              name="_subject"
-              value="New Contact Form Submission" />
-            <input type="hidden" name="_captcha" value="false" />
-
             <div class="mb-6">
               <label for="name" class="form-label">
                 Full Name <span class="text-red-500">*</span>
@@ -56,6 +60,9 @@
                 placeholder="John Doe"
                 type="text"
                 required />
+              <span
+                id="name-error"
+                class="text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <div class="mb-6">
@@ -69,6 +76,9 @@
                 placeholder="john.doe@email.com"
                 type="email"
                 required />
+              <span
+                id="email-error"
+                class="text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <div class="mb-6">
@@ -104,6 +114,9 @@
                 <option value="mentorship">Mentorship Request</option>
                 <option value="other">Other</option>
               </select>
+              <span
+                id="inquiry_type-error"
+                class="text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <div class="mb-6">
@@ -117,6 +130,9 @@
                 placeholder="Brief subject line"
                 type="text"
                 required />
+              <span
+                id="subject-error"
+                class="text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <div class="mb-6">
@@ -130,6 +146,9 @@
                 placeholder="Tell me more about your inquiry, project details, timeline, budget (if applicable), or any specific requirements..."
                 rows="8"
                 required></textarea>
+              <span
+                id="message-error"
+                class="text-red-500 text-sm mt-1 hidden"></span>
             </div>
 
             <div class="mb-6">
@@ -144,9 +163,22 @@
                 type="text" />
             </div>
 
-            <button type="submit" class="btn btn-primary w-full">
-              <span>Send Message</span>
-              <i class="fa fa-paper-plane pl-2"></i>
+            <button
+              type="submit"
+              id="submit-btn"
+              class="btn btn-primary w-full">
+              <span id="submit-text" style="display: inline;"
+                >Send Message</span
+              >
+              <span id="submit-loading" style="display: none;">Sending...</span>
+              <i
+                id="submit-icon"
+                style="display: inline;"
+                class="fa fa-paper-plane pl-2"></i>
+              <i
+                id="loading-icon"
+                style="display: none;"
+                class="fa fa-spinner fa-spin pl-2"></i>
             </button>
           </form>
 
@@ -176,23 +208,307 @@
   </section>
 
   <script>
-    // Check if redirected with success parameter
-    window.addEventListener("DOMContentLoaded", function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("success") === "true") {
-        // Hide form and show success message
-        document.getElementById("contact-form").style.display = "none";
-        document.getElementById("success-message").classList.remove("hidden");
+    // AJAX Form Submission
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("contact-form");
+      const submitBtn = document.getElementById("submit-btn");
+      const submitText = document.getElementById("submit-text");
+      const submitLoading = document.getElementById("submit-loading");
+      const submitIcon = document.getElementById("submit-icon");
+      const loadingIcon = document.getElementById("loading-icon");
+      const successMessage = document.getElementById("success-message");
+      const errorMessage = document.getElementById("error-message");
 
-        // Scroll to success message
-        document
-          .getElementById("success-message")
-          .scrollIntoView({ behavior: "smooth", block: "center" });
-
-        // Clean URL (remove success parameter)
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
+      // Safety check - ensure all elements exist
+      if (
+        !form ||
+        !submitBtn ||
+        !submitText ||
+        !submitLoading ||
+        !submitIcon ||
+        !loadingIcon
+      ) {
+        console.error("Form elements not found");
+        return;
       }
+
+      // Function to reset button state using inline styles
+      function resetButtonState() {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitText) {
+          submitText.style.display = "inline";
+          submitText.classList.remove("hidden");
+        }
+        if (submitLoading) {
+          submitLoading.style.display = "none";
+          submitLoading.classList.add("hidden");
+        }
+        if (submitIcon) {
+          submitIcon.style.display = "inline";
+          submitIcon.classList.remove("hidden");
+        }
+        if (loadingIcon) {
+          loadingIcon.style.display = "none";
+          loadingIcon.classList.add("hidden");
+        }
+      }
+
+      // Clear any stale session storage on page load
+      sessionStorage.removeItem("formSubmitted");
+
+      // Always ensure button is in normal state on page load
+      resetButtonState();
+
+      // Check on page load if form was submitted (using sessionStorage)
+      const formSubmitted = sessionStorage.getItem("formSubmitted");
+      if (formSubmitted === "true") {
+        if (form) form.style.display = "none";
+        if (successMessage) successMessage.classList.remove("hidden");
+        sessionStorage.removeItem("formSubmitted");
+      }
+
+      // Custom validation functions
+      function showError(fieldId, message) {
+        const errorElement = document.getElementById(fieldId + "-error");
+        const inputElement = document.getElementById(fieldId);
+        if (errorElement) {
+          errorElement.textContent = message;
+          errorElement.classList.remove("hidden");
+        }
+        if (inputElement) {
+          inputElement.classList.add("border-red-500");
+        }
+      }
+
+      function clearError(fieldId) {
+        const errorElement = document.getElementById(fieldId + "-error");
+        const inputElement = document.getElementById(fieldId);
+        if (errorElement) {
+          errorElement.textContent = "";
+          errorElement.classList.add("hidden");
+        }
+        if (inputElement) {
+          inputElement.classList.remove("border-red-500");
+        }
+      }
+
+      function validateField(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field) return true;
+
+        const value = field.value.trim();
+
+        switch (fieldId) {
+          case "name":
+            if (!value) {
+              showError("name", "Please enter your full name");
+              return false;
+            } else if (value.length < 2) {
+              showError("name", "Name must be at least 2 characters long");
+              return false;
+            }
+            break;
+
+          case "email":
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!value) {
+              showError("email", "Please enter your email address");
+              return false;
+            } else if (!emailRegex.test(value)) {
+              showError("email", "Please enter a valid email address");
+              return false;
+            }
+            break;
+
+          case "inquiry_type":
+            if (!field.value) {
+              showError("inquiry_type", "Please select an inquiry type");
+              return false;
+            }
+            break;
+
+          case "subject":
+            if (!value) {
+              showError("subject", "Please enter a subject");
+              return false;
+            } else if (value.length < 5) {
+              showError(
+                "subject",
+                "Subject must be at least 5 characters long",
+              );
+              return false;
+            }
+            break;
+
+          case "message":
+            if (!value) {
+              showError("message", "Please enter your message");
+              return false;
+            } else if (value.length < 20) {
+              showError(
+                "message",
+                "Message must be at least 20 characters long",
+              );
+              return false;
+            }
+            break;
+        }
+
+        clearError(fieldId);
+        return true;
+      }
+
+      function validateForm() {
+        let isValid = true;
+
+        // Clear all previous errors
+        ["name", "email", "inquiry_type", "subject", "message"].forEach(
+          clearError,
+        );
+
+        // Validate name
+        const name = document.getElementById("name").value.trim();
+        if (!name) {
+          showError("name", "Please enter your full name");
+          isValid = false;
+        } else if (name.length < 2) {
+          showError("name", "Name must be at least 2 characters long");
+          isValid = false;
+        }
+
+        // Validate email
+        const email = document.getElementById("email").value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) {
+          showError("email", "Please enter your email address");
+          isValid = false;
+        } else if (!emailRegex.test(email)) {
+          showError("email", "Please enter a valid email address");
+          isValid = false;
+        }
+
+        // Validate inquiry type
+        const inquiryType = document.getElementById("inquiry_type").value;
+        if (!inquiryType) {
+          showError("inquiry_type", "Please select an inquiry type");
+          isValid = false;
+        }
+
+        // Validate subject
+        const subject = document.getElementById("subject").value.trim();
+        if (!subject) {
+          showError("subject", "Please enter a subject");
+          isValid = false;
+        } else if (subject.length < 5) {
+          showError("subject", "Subject must be at least 5 characters long");
+          isValid = false;
+        }
+
+        // Validate message
+        const message = document.getElementById("message").value.trim();
+        if (!message) {
+          showError("message", "Please enter your message");
+          isValid = false;
+        } else if (message.length < 20) {
+          showError("message", "Message must be at least 20 characters long");
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      // Add real-time validation on blur
+      ["name", "email", "inquiry_type", "subject", "message"].forEach(
+        (fieldId) => {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.addEventListener("blur", function () {
+              validateField(fieldId);
+            });
+            field.addEventListener("input", function () {
+              clearError(fieldId);
+            });
+          }
+        },
+      );
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        // Validate form before submission
+        if (!validateForm()) {
+          return;
+        }
+
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitText.style.display = "none";
+        submitText.classList.add("hidden");
+        submitLoading.style.display = "inline";
+        submitLoading.classList.remove("hidden");
+        submitIcon.style.display = "none";
+        submitIcon.classList.add("hidden");
+        loadingIcon.style.display = "inline";
+        loadingIcon.classList.remove("hidden");
+
+        // Get form data
+        const formData = new FormData(form);
+
+        try {
+          // Submit to Formspree
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+            },
+          });
+
+          if (response.ok) {
+            // Success - mark as submitted and hide form
+            sessionStorage.setItem("formSubmitted", "true");
+            form.style.display = "none";
+            successMessage.classList.remove("hidden");
+            successMessage.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+
+            // Reset form
+            form.reset();
+
+            // Reset button state
+            resetButtonState();
+          } else {
+            // Error - show error message
+            errorMessage.classList.remove("hidden");
+            errorMessage.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+
+            // Reset button state
+            resetButtonState();
+
+            // Hide error message after 5 seconds
+            setTimeout(() => {
+              errorMessage.classList.add("hidden");
+            }, 5000);
+          }
+        } catch (error) {
+          // Network error - show error message
+          errorMessage.classList.remove("hidden");
+          errorMessage.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // Reset button state
+          resetButtonState();
+
+          // Hide error message after 5 seconds
+          setTimeout(() => {
+            errorMessage.classList.add("hidden");
+          }, 5000);
+        }
+      });
     });
   </script>
 {{ end }}
