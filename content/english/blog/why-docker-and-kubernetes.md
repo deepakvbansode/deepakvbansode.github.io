@@ -1,9 +1,9 @@
 ---
-title: "A Simple Introduction to Docker and Kubernetes"
+title: "Why We Needed Docker and Kubernetes in the First Place"
 meta_title: ""
 description: "Why part of docker and kubernetes"
 date: 2025-04-04T05:00:00Z
-image: "/images/image-placeholder.png"
+image: "/images/blog/why-docker-and-k8s/docker-k8s-title.png"
 categories: ["Kubernetes", "Docker"]
 author: "Deepak Bansode"
 tags: ["Docker", "Kubernetes"]
@@ -25,7 +25,7 @@ In a typical development process, developers work on their local machines. To ru
 
 After writing the code, the developer hands it over to testers or SREs, who repeat the same steps on test and production servers—install dependencies, set configurations, and run the application.
 
-![traditional-develpment](/images/blog/intro-docker-and-k8s/traditional-development.jpg)
+![traditional-develpment](/images/blog/why-docker-and-k8s/traditional-development.jpg)
 
 ### Common Problems
 
@@ -47,7 +47,7 @@ The main root cause of deployment issues is human intervention. When humans manu
 
 Docker solves this by giving us a simple idea:
 
-`Package everything needed for your application into a single unit called a image.`
+> Package everything needed for your application into a single unit called a image.
 
 How Docker Works (In Simple Words)
 
@@ -61,7 +61,7 @@ How Docker Works (In Simple Words)
 2. You build an Image. It is a blueprint created from the Dockerfile.
 3. You run Containers. It is an actual running instances created from the image.
 
-![traditional-develpment](/images/blog/intro-docker-and-k8s/docker-steps.jpg)
+![traditional-develpment](/images/blog/why-docker-and-k8s/docker-steps.jpg)
 
 Think of:
 
@@ -71,7 +71,7 @@ Think of:
 
 Once an image works on your system, it will work on any system (same OS), because everything is packaged inside it.
 
-![traditional-develpment](/images/blog/intro-docker-and-k8s/docker-working.jpg)
+![traditional-develpment](/images/blog/why-docker-and-k8s/docker-working.jpg)
 
 Why Docker Is Powerful
 
@@ -86,7 +86,7 @@ Why Docker Is Powerful
 
 Imagine you have 50 microservices running as Docker containers on multiple servers.
 
-![traditional-develpment](/images/blog/intro-docker-and-k8s/micro-service-cluster.jpg)
+![traditional-develpment](/images/blog/why-docker-and-k8s/micro-service-cluster.jpg)
 
 Now think of these challenges:
 
@@ -122,40 +122,40 @@ This is exactly the problem Kubernetes solves.
 
 Kubernetes is a system designed to automate all the challenges we discussed:
 
-- Scheduling
-- Restarting failed containers
-- Service discovery
-- Load balancing
-- Networking
-- Scaling
-- And much more
+- **Scheduling**
+- **Restarting failed containers**
+- **Service discovery**
+- **Load balancing**
+- **Networking**
+- **Scaling**
+- **And much more**
 
 To manage everything cleanly, Kubernetes divides machines into two groups:
 
-1. Control Plane (Master Nodes)
+### 1. _Control Plane (Master Nodes)_
 
 This is the brain of the cluster.
 It contains:
 
-- API Server → Entry point for all commands
-- Scheduler → Decides which server to run a pod on
-- Controller Manager → Watches the system and fixes issues (like restarting pods)
-- etcd → A database storing cluster state
-- Cloud Controller Manager → Interacts with cloud providers (AWS, GCP, etc.)
+- **API Server** → Entry point for all commands
+- **Scheduler** → Decides which server to run a pod on
+- **Controller Manager** → Watches the system and fixes issues (like restarting pods)
+- **etcd** → A database storing cluster state
+- **Cloud Controller Manager** → Interacts with cloud providers (AWS, GCP, etc.)
 
-2. Worker Nodes (Data Plane)
+### 2. _Worker Nodes (Data Plane)_
 
 These nodes actually run your applications.
 
 They run:
 
-- Kubelet → Communicates with API server and creates pods
-- Kube Proxy → Handles networking
-- Container Runtime (Docker, containerd, etc.) → Creates containers
+- **Kubelet** → Communicates with API server and creates pods
+- **Kube Proxy** → Handles networking
+- **Container Runtime (Docker, containerd, etc.)** → Creates containers
 
-![traditional-develpment](/images/blog/intro-docker-and-k8s/k8s.jpg)
+![traditional-develpment](/images/blog/why-docker-and-k8s/k8s.jpg)
 
-Note:
+**Note**:
 
 > In Kubernetes, you don’t directly create containers.
 > You create Pods, which are wrappers around containers. A pod can contain one or multiple containers.
@@ -164,7 +164,7 @@ Note:
 
 Let’s say you want to deploy a new microservice:
 
-1. You apply a YAML file (using kubectl apply).
+1. You apply a YAML file (using kubectl apply). YAML contains the desired state of your application.
 2. The API server receives the request.
 3. The information is stored in etcd.
 4. The scheduler selects the best node to run it.
@@ -181,11 +181,3 @@ Docker solved the packaging and consistency problem.
 Kubernetes solved the orchestration and reliability problem.
 
 Together, they form one of the most powerful platforms for building and running applications at scale.
-
-If you're just beginning, focus on understanding the fundamentals:
-
-- What problem containers solve
-- Why orchestration is needed
-- How Kubernetes components work together
-
-Once these concepts are clear, everything else—YAML files, deployments, services, scaling—becomes easier to understand.
