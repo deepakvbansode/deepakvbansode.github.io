@@ -23,7 +23,7 @@ In a typical development process, developers work on their local machines. To ru
 3. Frameworks and libraries
 4. Application code and its configuration (like database URLs, ports, etc.)
 
-After writing the code, the developer hands it over to testers or SREs, who repeat the same steps on test and production servers—install dependencies, set configurations, and run the application.
+After writing the code, the developer hands it over to testers or SREs, who repeat the same steps on test and production servers,install dependencies, set configurations, and run the application.
 
 ![traditional-develpment](/images/blog/why-docker-and-k8s/traditional-development.jpg)
 
@@ -39,7 +39,7 @@ This happens when:
 - Configuration is not consistent
 - Something is missed during manual setup
 
-Manual deployments are slow, error-prone, and difficult to scale—especially when microservices entered the picture. In a microservices world, every service may use a different language and dependencies, making things even more complicated.
+Manual deployments are slow, error-prone, and difficult to scale, especially when microservices entered the picture. In a microservices world, every service may use a different language and dependencies, making things even more complicated.
 
 ## Enter Docker: Containers to the Rescue
 
@@ -90,45 +90,112 @@ Imagine you have 50 microservices running as Docker containers on multiple serve
 
 Now think of these challenges:
 
-1. **Scheduling**
+### 1. Where Should Containers Run?
 
-   Where should a new container run?
-   On Server 1, Server 2, or Server 3?
+When you have multiple machines (servers), and need to start a new container:
 
-2. **Self-healing**
+- Should it run on Server A?
+- Does Server A has enough RAM and CPU to run new container?
+- Would Server B be better?
 
-   What if a container crashes?
-   Who will restart it?
+Manually deciding where containers go becomes too hard as the number of servers grows. This problem is called **scheduling** problem.
 
-3. **Service Discovery**
+---
 
-   How do services find each other?
-   If a new service is added, who informs the rest?
+### 2. How Do We Keep Services Running?
 
-4. **Load Balancing & High Availability**
+Containers can fail due to various issues ex: Panics in code. that’s normal.
 
-   If one instance of a service goes down, traffic should move to another.
-   If you have two instances, requests must be distributed properly.
+When a container stops:
 
-5. **Networking**
+- How do we notice it?
+- Who restarts it?
+- How do we make sure there are always running?
 
-   How do containers across different machines communicate securely and reliably?
+Doing this manually for hundreds of containers is not practical.
 
-To solve all this manually, you would have to write scripts, monitors, registries, load balancers—basically build your own orchestration system.
+---
 
-This is exactly the problem Kubernetes solves.
+### 3. How Do Services Find Each Other?
+
+Imagine one service (like a backend) needs to talk to another (like a notification).
+
+In simple setups, you might connect with an IP address. But in a real system:
+
+- Containers start and stop dynamically
+- IP addresses can change
+- Multiple copies of a service might exist
+
+Hardcoding IPs doesn’t work, we need **service discovery** that tracks where each service is currently running.
+
+---
+
+### 4. How Is Traffic Distributed?
+
+If there are multiple copies of a service:
+
+- Which copy should handle incoming requests?
+- How do we make sure the load is balanced?
+
+Manually sending all traffic to one instance can overload it. We need systems that **spread requests evenly** across replicas.
+
+---
+
+### 5. How Do We Handle Failures and Recovery?
+
+In a real environment:
+
+- A server might crash
+- Network issues can occur
+- Containers might stop unexpectedly
+
+We want systems that can automatically detect these failures and **self-heal** without human intervention.
+
+---
+
+## These Are Orchestration Problems
+
+All of the problems above are not solved by Docker itself. They belong to a category called **orchestration problems**, issues that arise when you try to manage many containers across many machines.
+
+This is where **Kubernetes steps in**.
+
+Kubernetes is designed specifically to solve these orchestration issues:
+
+- Deciding where containers should run
+- Restarting failed services automatically
+- Ensuring consistent service discovery
+- Balancing traffic across containers
+- Maintaining the desired state of the system
+
+By automating these tasks, Kubernetes helps make systems **reliable, scalable, and easier to operate**.
+
+---
+
+## What Kubernetes Actually Manages
+
+Rather than directly managing individual containers, Kubernetes works with a higher-level concept called a **Pod**.
+
+A **Pod** is the smallest unit in Kubernetes and can contain one or more containers. Kubernetes schedules, monitors, and manages Pods, not containers directly. This abstraction helps Kubernetes handle groups of containers together.
+
+---
+
+## The Declarative Approach of Kubernetes
+
+One powerful idea in Kubernetes is this:
+
+> **You tell Kubernetes what you want, not how to do it.**
+
+Instead of writing scripts that list steps, you define your **desired state** in a manifest file:
+
+- How many copies (replicas) you want
+- Which container image to use
+- What resources are required
+
+Kubernetes continuously works in the background to ensure the real system matches your desired state, restarting, rescheduling, and healing if needed.
+
+---
 
 ## Kubernetes: The Orchestrator
-
-Kubernetes is a system designed to automate all the challenges we discussed:
-
-- **Scheduling**
-- **Restarting failed containers**
-- **Service discovery**
-- **Load balancing**
-- **Networking**
-- **Scaling**
-- **And much more**
 
 To manage everything cleanly, Kubernetes divides machines into two groups:
 
@@ -155,22 +222,18 @@ They run:
 
 ![traditional-develpment](/images/blog/why-docker-and-k8s/k8s.jpg)
 
-**Note**:
-
-> In Kubernetes, you don’t directly create containers.
-> You create Pods, which are wrappers around containers. A pod can contain one or multiple containers.
-
 ## How Everything Comes Together
 
 Let’s say you want to deploy a new microservice:
 
-1. You apply a YAML file (using kubectl apply). YAML contains the desired state of your application.
-2. The API server receives the request.
-3. The information is stored in etcd.
-4. The scheduler selects the best node to run it.
-5. Kubelet on that node creates a pod using the container runtime.
-6. Controller Manager keeps watching the pod. If it dies, a new one is created.
-7. Kube Proxy ensures networking works.
+1. You create a YAML file with desired state of application.
+2. You apply a YAML file (using kubectl apply).
+3. The API server receives the request.
+4. The information is stored in etcd.
+5. The scheduler selects the best node to run it.
+6. Kubelet on that node creates a pod using the container runtime.
+7. Controller Manager keeps watching the pod. If it dies, a new one is created.
+8. Kube Proxy ensures networking works.
 
 Everything is handled automatically.
 This is the power of Kubernetes.
