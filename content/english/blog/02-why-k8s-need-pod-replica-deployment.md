@@ -3,14 +3,14 @@ title: "Why Kubernetes Needs Deployments, ReplicaSets, and Pods"
 meta_title: ""
 description: "Understanding k8s"
 date: 2025-04-04T05:00:00Z
-image: "/images/image-placeholder.png"
+image: "/images/blog/pod-replica-deployment/logo.png"
 categories: ["Kubernetes", "Docker"]
 author: "Deepak Bansode"
 tags: ["Docker", "Kubernetes"]
 draft: false
 ---
 
-_This is the second article in the Kubernetes series, continuing from the earlier posts on Why We Needed Docker and Kubernetes in the First Place._
+_This is the second article in the Kubernetes series, continuing from the earlier posts on [Why We Needed Docker and Kubernetes in the First Place](/blog/01-why-docker-and-kubernetes/)._
 
 In the previous article, we understood **why Kubernetes exists** and the orchestration problems it solves. Now that Kubernetes is managing containers at scale, the next natural question is:
 
@@ -442,7 +442,7 @@ spec:
 
 ## Lets go ahead and deploy rest other deployment similar way
 
-## ![Final state after deployment](/images/blog/pod-replica-deployment/state-after-deployment.jpg)
+![Final state after all deployment](/images/blog/pod-replica-deployment/state-after-all-service-deployed.jpg)
 
 ---
 

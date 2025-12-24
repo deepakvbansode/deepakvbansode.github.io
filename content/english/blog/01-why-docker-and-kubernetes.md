@@ -244,3 +244,5 @@ Docker solved the packaging and consistency problem.
 Kubernetes solved the orchestration and reliability problem.
 
 Together, they form one of the most powerful platforms for building and running applications at scale.
+
+Continue Reading Next Article [Why Kubernetes Needs Deployments, ReplicaSets, and Pods](/blog/02-why-k8s-need-pod-replica-deployment/)
