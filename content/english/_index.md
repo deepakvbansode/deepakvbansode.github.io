@@ -15,10 +15,10 @@ features:
     image: "/images/experties.svg"
     content: "A decade of hands-on experience with modern technologies and best practices in software development."
     bulletpoints:
-      - "**Full-Stack Development:** React, Node.js, Python, Java, and modern JavaScript frameworks"
-      - "**Cloud & DevOps:** AWS, Azure, Docker, Kubernetes, CI/CD pipelines"
+      - "**Full-Stack Development:** Golang, React, Node.js, and modern JavaScript frameworks"
+      - "**Cloud & DevOps:** AWS, Docker, Kubernetes, CI/CD pipelines"
       - "**Architecture:** Microservices, RESTful APIs, Event-driven systems"
-      - "**Databases:** SQL, NoSQL, MongoDB, PostgreSQL, Redis"
+      - "**Databases:** MongoDB, MySQL, Redis"
       - "**Leadership:** Technical mentoring, code reviews, agile methodologies"
       - "**Best Practices:** Test-driven development, design patterns, clean code principles"
     button:
