@@ -1,7 +1,7 @@
 ---
 title: "Why We Needed Docker and Kubernetes in the First Place"
 meta_title: ""
-description: "Why part of docker and kubernetes"
+description: "Why we needed Docker and Kubernetes in the first place"
 date: 2025-04-04T05:00:00Z
 image: "/images/blog/why-docker-and-k8s/docker-k8s-title.png"
 categories: ["Kubernetes", "Docker"]
@@ -10,7 +10,7 @@ tags: ["Docker", "Kubernetes"]
 draft: false
 ---
 
-When we learn any new technology, it’s easy to jump straight into commands or tools. But I strongly believe we should first understand the problem that technology is trying to solve. Once the problem is clear, the solution ie Docker, Kubernetes, or anything else, makes much more sense.
+When we learn any new technology, it’s easy to jump straight into commands or tools. But I strongly believe we should first understand the problem that technology is trying to solve. Once the problem is clear, the solution, i.e., Docker, Kubernetes, or anything else, makes much more sense.
 
 This article walks through the challenges in modern software development and explains how Docker and Kubernetes help us overcome them.
 
@@ -23,9 +23,9 @@ In a typical development process, developers work on their local machines. To ru
 3. Frameworks and libraries
 4. Application code and its configuration (like database URLs, ports, etc.)
 
-After writing the code, the developer hands it over to testers or SREs, who repeat the same steps on test and production servers,install dependencies, set configurations, and run the application.
+After writing the code, the developer hands it over to testers or SREs, who repeat the same steps on test and production servers, install dependencies, set configurations, and run the application.
 
-![traditional-develpment](/images/blog/why-docker-and-k8s/traditional-development.jpg)
+![Traditional software development and deployment process](/images/blog/why-docker-and-k8s/traditional-development.jpg)
 
 ### Common Problems
 
@@ -47,7 +47,7 @@ The main root cause of deployment issues is human intervention. When humans manu
 
 Docker solves this by giving us a simple idea:
 
-> Package everything needed for your application into a single unit called a image.
+> Package everything needed for your application into a single unit called an image.
 
 How Docker Works (In Simple Words)
 
@@ -59,9 +59,9 @@ How Docker Works (In Simple Words)
 - What ports to expose
 
 2. You build an Image. It is a blueprint created from the Dockerfile.
-3. You run Containers. It is an actual running instances created from the image.
+3. You run Containers. It is an actual running instance created from the image.
 
-![traditional-develpment](/images/blog/why-docker-and-k8s/docker-steps.jpg)
+![How Docker works: Dockerfile, Image, Container](/images/blog/why-docker-and-k8s/docker-steps.jpg)
 
 Think of:
 
@@ -71,7 +71,7 @@ Think of:
 
 Once an image works on your system, it will work on any system (same OS), because everything is packaged inside it.
 
-![traditional-develpment](/images/blog/why-docker-and-k8s/docker-working.jpg)
+![Docker container consistency across environments](/images/blog/why-docker-and-k8s/docker-working.jpg)
 
 Why Docker Is Powerful
 
@@ -86,7 +86,7 @@ Why Docker Is Powerful
 
 Imagine you have 50 microservices running as Docker containers on multiple servers.
 
-![traditional-develpment](/images/blog/why-docker-and-k8s/micro-service-cluster.jpg)
+![Microservices cluster with multiple containers](/images/blog/why-docker-and-k8s/micro-service-cluster.jpg)
 
 Now think of these challenges:
 
@@ -95,7 +95,7 @@ Now think of these challenges:
 When you have multiple machines (servers), and need to start a new container:
 
 - Should it run on Server A?
-- Does Server A has enough RAM and CPU to run new container?
+- Does Server A have enough RAM and CPU to run a new container?
 - Would Server B be better?
 
 Manually deciding where containers go becomes too hard as the number of servers grows. This problem is called **scheduling** problem.
@@ -104,13 +104,13 @@ Manually deciding where containers go becomes too hard as the number of servers 
 
 ### 2. How Do We Keep Services Running?
 
-Containers can fail due to various issues ex: Panics in code. that’s normal.
+Containers can fail due to various issues, e.g., panics in code. That's normal.
 
 When a container stops:
 
 - How do we notice it?
 - Who restarts it?
-- How do we make sure there are always running?
+- How do we make sure there are always some running?
 
 Doing this manually for hundreds of containers is not practical.
 
@@ -220,14 +220,14 @@ They run:
 - **Kube Proxy** → Handles networking
 - **Container Runtime (Docker, containerd, etc.)** → Creates containers
 
-![traditional-develpment](/images/blog/why-docker-and-k8s/k8s.jpg)
+![Kubernetes architecture: Control Plane and Worker Nodes](/images/blog/why-docker-and-k8s/k8s.jpg)
 
 ## How Everything Comes Together
 
 Let’s say you want to deploy a new microservice:
 
-1. You create a YAML file with desired state of application.
-2. You apply a YAML file (using kubectl apply).
+1. You create a YAML file with the desired state of the application.
+2. You apply the YAML file using kubectl apply.
 3. The API server receives the request.
 4. The information is stored in etcd.
 5. The scheduler selects the best node to run it.

@@ -28,11 +28,11 @@ This article explains **why these abstractions exist**, what problems they solve
 
 ## Requirement
 
-Imagine you have requirement to deploy 3 tier todo application on kubernets cluster. The frontend is built using React, and backend is built using Golang. MySql database is used to store the todos data. The architecute is as follows;
+Imagine you have a requirement to deploy a 3-tier to-do application on a Kubernetes cluster. The frontend is built using React, and the backend is built using Golang. A MySQL database is used to store the to-do data. The architecture is as follows:
 
 ![architecture](/images/blog/pod-replica-deployment/architecture.jpg)
 
-The application team has build the application and docker images. We have followings things;
+The application team has built the application and Docker images. We have the following things:
 
 1. Frontend docker image
 2. Backend docker image
@@ -40,24 +40,24 @@ The application team has build the application and docker images. We have follow
 4. NGINX image
 5. Kubernets cluster setup
 
-What we want to do?
+What do we want to do?
 
-1. Deploy these image on k8s cluster i.e. create container from those images
-2. Setup reverse proxy
-3. Setup database
-4. Setup networking between components i.e backend can talk to DB
-5. Make application accessible over the internet.
+1. Deploy these images on the K8s cluster, i.e., create containers from those images
+2. Set up a reverse proxy
+3. Set up the database
+4. Set up networking between components, i.e., the backend can talk to the DB
+5. Make the application accessible over the internet.
 
-Final outcome;
+Final outcome:
 ![final-result](/images/blog/pod-replica-deployment/final-result.jpg)
 
 ## Deploying Frontend
 
-We have frontend docker image and goal is to deploy on k8s cluster.
+We have a frontend Docker image, and the goal is to deploy it on the K8s cluster.
 
 ![Deploy Frontend ](/images/blog/pod-replica-deployment/frontend-image-to-container.jpg)
 
-As we learned kubernes doesn't manages container. We need **pod** to run the container.
+As we learned, Kubernetes doesn't manage containers. We need a **pod** to run the container.
 
 ## Pods: The Smallest Unit Kubernetes Understands
 
@@ -101,10 +101,10 @@ That’s why Pods exist as an abstraction above containers.
 
 ## Creating first pod
 
-Lets tell kuberntes that we want a pod and it should run the container from frontned docker image. We can tell this to kubernetes by either running command `kubctl run frontend --image=frontend` or create yaml file and run command `kubectl apply -f pod.yaml`
+Let's tell Kubernetes that we want a pod and it should run the container from the frontend Docker image. We can tell this to Kubernetes by either running the command `kubectl run frontend --image=frontend` or creating a YAML file and running the command `kubectl apply -f pod.yaml`
 
 ```yaml
-//pod.yaml
+# pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -117,14 +117,14 @@ spec:
         - containerPort: 80
 ```
 
-You use `kubectl` commmand line tool to issue these commands.
+You use the `kubectl` command-line tool to issue these commands.
 
-### What happens behind the sceen when you run command `kubectl apply -f pod.yaml`
+### What happens behind the scenes when you run the command `kubectl apply -f pod.yaml`
 
 ![Pod Creation Flow ](/images/blog/pod-replica-deployment/pod-creation-flow.jpg)
 
-1. Kubectl (command line tool) talks to K8S API server and provides details(pod.yaml) to create pod.
-2. API Server create object in etcd databse as follows
+1. Kubectl (command-line tool) talks to the K8s API server and provides details (pod.yaml) to create a pod.
+2. The API Server creates an object in the etcd database as follows
 
 ```json
 {
@@ -134,7 +134,7 @@ You use `kubectl` commmand line tool to issue these commands.
 }
 ```
 
-3. Scheduler receives the event about the pod. It find the right node to run the pod and update the etcd database.
+3. The Scheduler receives the event about the pod. It finds the right node to run the pod and updates the etcd database.
 
 ```json
 {
@@ -144,9 +144,9 @@ You use `kubectl` commmand line tool to issue these commands.
 }
 ```
 
-5. Kubelet running on worker-node-1 recieves the event. It creates a pod and the container using CRI(Container runtime interface).
-6. Kubelet uses CNI plugin to assign the IP address to pod.
-7. Pod is created with container inside it.
+5. Kubelet running on worker-node-1 receives the event. It creates a pod and the container using the CRI (Container Runtime Interface).
+6. Kubelet uses a CNI plugin to assign the IP address to the pod.
+7. The pod is created with the container inside it.
 
 ```json
 {
@@ -156,7 +156,7 @@ You use `kubectl` commmand line tool to issue these commands.
 }
 ```
 
-Cluster after pod is created
+Cluster after the pod is created
 
 ![Cluster after pod creation ](/images/blog/pod-replica-deployment/cluster-after-pod-creation.jpg)
 
@@ -194,12 +194,12 @@ For example:
 - A web server may take time to connect to a database
 - A Java application may still be warming up
 
-Kubernetes solves this using **Probes**. Kubelet perform few checks either by calling HTTP endpoint or GRPC method or running command inside container. These checks are called Probes.
+Kubernetes solves this using **Probes**. Kubelet performs a few checks either by calling an HTTP endpoint or a gRPC method or running a command inside the container. These checks are called Probes.
 
 ### Liveness Probe
 
 - Checks if the application is still alive
-- If it fails, Kubelet kills container. It decides whether to restart based on restartPolicy.
+- If it fails, Kubelet kills the container. It decides whether to restart based on the restartPolicy.
 
 ### Readiness Probe
 
@@ -234,7 +234,7 @@ This is where **ReplicaSets** come in.
 
 ## ReplicaSets: Keeping Pods Alive
 
-You can think ReplicaSet is wrapper on pod. This wrapper makes sure pod is up and running.
+You can think of a ReplicaSet as a wrapper on a pod. This wrapper makes sure the pod is up and running.
 
 ![ReplicaSet](/images/blog/pod-replica-deployment/replicaset.jpg)
 
@@ -254,7 +254,7 @@ The ReplicaSet will:
 
 ReplicaSets continuously **watch the cluster state** and act to maintain the desired number of Pods.
 
-However, ReplicaSets solve only **one problem** availability.
+However, ReplicaSets solve only **one problem**: availability.
 
 They don’t handle deployments or updates.
 
@@ -277,11 +277,11 @@ This is why Kubernetes introduces **Deployments**.
 
 **Deployment**:
 
-You can think of Deployment as wrapper on Replicaset.
+You can think of a Deployment as a wrapper on a ReplicaSet.
 
 ![Deployment](/images/blog/pod-replica-deployment/deployment.jpg)
 
-Deployment is reponsible for;
+A Deployment is responsible for:
 
 - Manages ReplicaSets
 - Enables rolling updates
@@ -352,7 +352,7 @@ spec:
 
 ## What happens behind the sceen when you run command `kubectl apply -f deployment.yaml`
 
-![Deployment Flow](/images/blog/pod-replica-deployment/deplyment-flow.jpg)
+![Deployment Flow](/images/blog/pod-replica-deployment/deployment-flow.jpg)
 
 1. Kubectl (command line tool) talks to K8S API server and provides details (deployment.yaml) to create deployment.
 2. API Server create object in etcd databse as follows
@@ -440,9 +440,9 @@ spec:
 
 ---
 
-## Lets go ahead and deploy rest other deployment similar way
+## Let's go ahead and deploy the rest of the other deployments in a similar way
 
-![Final state after all deployment](/images/blog/pod-replica-deployment/state-after-all-service-deployed.jpg)
+![Final state after all deployments](/images/blog/pod-replica-deployment/state-after-all-service-deployed.jpg)
 
 ---
 
